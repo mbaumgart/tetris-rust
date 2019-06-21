@@ -1,0 +1,10 @@
+[package]
+name = "rust-game"
+version = "0.1.0"
+authors = ["Martin Baumgart <martin.baumgart@daparto.com>"]
+edition = "2018"
+
+[dependencies]
+piston = "0.48.0"
+piston_window = "0.99.0"
+find_folder = "0.3.0"

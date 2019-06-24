@@ -7,7 +7,7 @@ pub struct Config {
 impl Config {
     pub fn new() -> Config {
         Config {
-            window_title: "Tetris Game".to_string(),
+            window_title: String::from("Tetris Game"),
             window_width: 400,
             window_height: 800,
         }

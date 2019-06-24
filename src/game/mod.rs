@@ -1,34 +1,40 @@
 extern crate find_folder;
-extern crate piston;
 extern crate piston_window;
 extern crate sprite;
 
 use ai_behavior::Action;
-use piston::input::*;
 use piston_window::*;
 use sprite::*;
 use std::rc::Rc;
 
+mod assets;
 mod config;
-// mod board;
 
 pub struct Game {
     config: config::Config,
     window: PistonWindow,
+    assets: assets::Assets,
 }
 
 impl Game {
     pub fn new() -> Game {
         let _config = config::Config::new();
-        let mut _window: PistonWindow = WindowSettings::new(_config.window_title.clone(), [_config.window_width, _config.window_height])
-            .exit_on_esc(true)
-            .samples(4)
-            .build()
-            .unwrap();
+
+        let mut _window = WindowSettings::new(
+            _config.window_title.clone(),
+            [_config.window_width, _config.window_height],
+        )
+        .exit_on_esc(true)
+        .samples(4)
+        .build()
+        .unwrap();
+
+        let _assets = assets::Assets::new(&mut _window);
 
         Game {
             config: _config,
             window: _window,
+            assets: _assets,
         }
     }
 
@@ -37,22 +43,8 @@ impl Game {
             .for_folder("assets")
             .unwrap();
 
-        let mut glyphs = self.window
-            .load_font(assets.join("FiraSans-Regular.ttf"))
-            .unwrap();
-
-        let mut texture_context = self.window.create_texture_context();
-
-        let tex_mainboard = Rc::new(
-            Texture::from_path(
-                &mut texture_context,
-                assets.join("mainboard.png"),
-                Flip::None,
-                &TextureSettings::new().mag(Filter::Nearest),
-            )
-            .unwrap(),
-        );
-        let mut sprite_mainboard = Sprite::from_texture(tex_mainboard.clone());
+        let tex_mainboard = Rc::new(self.assets.mainboard.clone());
+        let mut sprite_mainboard = Sprite::from_texture(tex_mainboard);
         sprite_mainboard.set_scale(0.5, 0.5);
         sprite_mainboard.set_position(
             self.config.window_width as f64 / 2.0,
@@ -64,16 +56,8 @@ impl Game {
 
         // let mut board = board::Board::new();
 
-        let tex_block = Rc::new(
-            Texture::from_path(
-                &mut texture_context,
-                assets.join("brick_blue.png"),
-                Flip::None,
-                &TextureSettings::new().mag(Filter::Nearest),
-            )
-            .unwrap(),
-        );
-        let mut sprite_block = Sprite::from_texture(tex_block.clone());
+        let tex_block = Rc::new(self.assets.brick_blue.clone());
+        let mut sprite_block = Sprite::from_texture(tex_block);
         sprite_block.set_scale(1.0, 1.0);
         sprite_block.set_position(
             self.config.window_width as f64 / 2.0,
@@ -123,24 +107,25 @@ impl Game {
                 scene.draw(context.transform, graphics);
                 // board.draw(context.transform, graphics);
 
-                // rectangle(
-                //     [1.0, 0.0, 0.0, 1.0], // red
-                //     [200.0, 200.0, 100.0, 100.0],
-                //     context.transform,
-                //     graphics,
-                // );
+                rectangle(
+                    [1.0, 0.0, 0.0, 1.0], // red
+                    [200.0, 200.0, 100.0, 100.0],
+                    context.transform,
+                    graphics,
+                );
 
-                let text_transform = context.transform.trans(100.0, 100.0);
-                Text::new_color([0.0, 0.0, 1.0, 1.0], 32)
-                    .draw(
-                        "Hello world!",
-                        &mut glyphs,
-                        &context.draw_state,
-                        text_transform,
-                        graphics,
-                    )
-                    .unwrap();
-                glyphs.factory.encoder.flush(device);
+                // let text_transform = context.transform.trans(100.0, 100.0);
+                // Text::new_color([0.0, 0.0, 1.0, 1.0], 32)
+                //     .draw(
+                //         "Hello world!",
+                //         &mut self.assets.font,
+                //         &context.draw_state,
+                //         text_transform,
+                //         graphics,
+                //     )
+                //     .unwrap();
+                // let glyphs = &self.assets.font;
+                // glyphs.factory.encoder.flush(device);
             });
         }
     }

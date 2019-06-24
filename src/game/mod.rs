@@ -18,8 +18,7 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Game {
-        let _config = config::Config::new();
-
+        let mut _config = config::Config::new();
         let mut _window = WindowSettings::new(
             _config.window_title.clone(),
             [_config.window_width, _config.window_height],
@@ -92,31 +91,21 @@ impl Game {
             //     println!("Mouse moved '{} {}'", pos[0], pos[1]);
             // });
 
+            let area_width = self.config.bricks_horizontal as f64 * block_width;
+            let area_height = self.config.bricks_vertical as f64 * block_width;
+
             self.window.draw_2d(&event, |context, graphics, _device| {
                 clear([0.8; 4], graphics);
 
                 rectangle(
-                    [1.0, 0.0, 0.0, 1.0], // red
-                    [200.0, 200.0, 20.0, 20.0],
+                    [0.5, 0.5, 0.5, 1.0], // color
+                    [0.0, 0.0, area_width, area_height],
                     context.transform,
                     graphics,
                 );
 
                 scene.draw(context.transform, graphics);
                 // board.draw(context.transform, graphics);
-
-                // let text_transform = context.transform.trans(100.0, 100.0);
-                // Text::new_color([0.0, 0.0, 1.0, 1.0], 32)
-                //     .draw(
-                //         "Hello world!",
-                //         &mut self.assets.font,
-                //         &context.draw_state,
-                //         text_transform,
-                //         graphics,
-                //     )
-                //     .unwrap();
-                // let glyphs = &self.assets.font;
-                // glyphs.factory.encoder.flush(device);
             });
         }
     }

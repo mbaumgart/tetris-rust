@@ -5,7 +5,6 @@ authors = ["Martin Baumgart <martin.baumgart@daparto.com>"]
 edition = "2018"
 
 [dependencies]
-piston = "0.48.0"
 piston_window = "0.99.0"
 piston2d-sprite = "0.55.0"
 piston-ai_behavior = "0.31.0"

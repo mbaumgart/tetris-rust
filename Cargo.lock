@@ -1008,7 +1008,6 @@ name = "rust-game"
 version = "0.1.0"
 dependencies = [
  "find_folder 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "piston 0.48.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston-ai_behavior 0.31.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-sprite 0.55.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston_window 0.99.0 (registry+https://github.com/rust-lang/crates.io-index)",

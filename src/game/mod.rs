@@ -9,36 +9,39 @@ use piston_window::*;
 use sprite::*;
 use std::rc::Rc;
 
+mod config;
 // mod board;
 
 pub struct Game {
-    window_width: u32,
-    window_height: u32,
+    config: config::Config,
+    window: PistonWindow,
 }
 
 impl Game {
     pub fn new() -> Game {
-        Game {
-            window_width: 400,
-            window_height: 600,
-        }
-    }
-
-    pub fn run(&mut self) {
-        let mut window: PistonWindow = WindowSettings::new("Tetris Game", [self.window_width, self.window_height])
+        let _config = config::Config::new();
+        let mut _window: PistonWindow = WindowSettings::new(_config.window_title.clone(), [_config.window_width, _config.window_height])
             .exit_on_esc(true)
             .samples(4)
             .build()
             .unwrap();
+
+        Game {
+            config: _config,
+            window: _window,
+        }
+    }
+
+    pub fn run(&mut self) {
         let assets = find_folder::Search::ParentsThenKids(3, 3)
             .for_folder("assets")
             .unwrap();
 
-        let mut glyphs = window
+        let mut glyphs = self.window
             .load_font(assets.join("FiraSans-Regular.ttf"))
             .unwrap();
 
-        let mut texture_context = window.create_texture_context();
+        let mut texture_context = self.window.create_texture_context();
 
         let tex_mainboard = Rc::new(
             Texture::from_path(
@@ -51,7 +54,10 @@ impl Game {
         );
         let mut sprite_mainboard = Sprite::from_texture(tex_mainboard.clone());
         sprite_mainboard.set_scale(0.5, 0.5);
-        sprite_mainboard.set_position(self.window_width as f64 / 2.0, self.window_height as f64 / 2.0);
+        sprite_mainboard.set_position(
+            self.config.window_width as f64 / 2.0,
+            self.config.window_height as f64 / 2.0,
+        );
 
         let mut scene = Scene::new();
         scene.add_child(sprite_mainboard);
@@ -69,7 +75,10 @@ impl Game {
         );
         let mut sprite_block = Sprite::from_texture(tex_block.clone());
         sprite_block.set_scale(1.0, 1.0);
-        sprite_block.set_position(width as f64 / 2.0, height as f64 / 2.0);
+        sprite_block.set_position(
+            self.config.window_width as f64 / 2.0,
+            self.config.window_height as f64 / 2.0,
+        );
         let id_block = scene.add_child(sprite_block);
 
         let anim_move_up = Action(MoveBy(0.1, 0.0, -100.0));
@@ -80,7 +89,7 @@ impl Game {
         // let mut cursor = [0.0, 0.0];
 
         // update loop
-        while let Some(event) = window.next() {
+        while let Some(event) = self.window.next() {
             scene.event(&event);
             // board.event(&event);
 
@@ -108,7 +117,7 @@ impl Game {
             //     println!("Mouse moved '{} {}'", pos[0], pos[1]);
             // });
 
-            window.draw_2d(&event, |context, graphics, device| {
+            self.window.draw_2d(&event, |context, graphics, device| {
                 clear([0.8; 4], graphics);
 
                 scene.draw(context.transform, graphics);

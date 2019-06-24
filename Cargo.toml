@@ -7,8 +7,6 @@ edition = "2018"
 [dependencies]
 piston = "0.48.0"
 piston_window = "0.99.0"
-gfx = "0.18.1"
-gfx_device_gl = "0.16.1"
 piston2d-sprite = "0.55.0"
 piston-ai_behavior = "0.31.0"
 find_folder = "0.3.0"

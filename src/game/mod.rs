@@ -39,12 +39,7 @@ impl Game {
     }
 
     pub fn run(&mut self) {
-        let assets = find_folder::Search::ParentsThenKids(3, 3)
-            .for_folder("assets")
-            .unwrap();
-
-        let tex_mainboard = Rc::new(self.assets.mainboard.clone());
-        let mut sprite_mainboard = Sprite::from_texture(tex_mainboard);
+        let mut sprite_mainboard = Sprite::from_texture(Rc::new(self.assets.mainboard.clone()));
         sprite_mainboard.set_scale(0.5, 0.5);
         sprite_mainboard.set_position(
             self.config.window_width as f64 / 2.0,
@@ -56,19 +51,15 @@ impl Game {
 
         // let mut board = board::Board::new();
 
-        let tex_block = Rc::new(self.assets.brick_blue.clone());
-        let mut sprite_block = Sprite::from_texture(tex_block);
-        sprite_block.set_scale(1.0, 1.0);
-        sprite_block.set_position(
-            self.config.window_width as f64 / 2.0,
-            self.config.window_height as f64 / 2.0,
-        );
+        let block_width = self.assets.brick_blue.get_width() as f64;
+        let mut sprite_block = Sprite::from_texture(Rc::new(self.assets.brick_blue.clone()));
+        sprite_block.set_position(block_width / 2.0, block_width / 2.0);
         let id_block = scene.add_child(sprite_block);
 
-        let anim_move_up = Action(MoveBy(0.1, 0.0, -100.0));
-        let anim_move_down = Action(MoveBy(0.1, 0.0, 100.0));
-        let anim_move_left = Action(MoveBy(0.1, -100.0, 0.0));
-        let anim_move_right = Action(MoveBy(0.1, 100.0, 0.0));
+        let anim_move_up = Action(MoveBy(0.1, 0.0, -block_width));
+        let anim_move_down = Action(MoveBy(0.1, 0.0, block_width));
+        let anim_move_left = Action(MoveBy(0.1, -block_width, 0.0));
+        let anim_move_right = Action(MoveBy(0.1, block_width, 0.0));
 
         // let mut cursor = [0.0, 0.0];
 
@@ -101,18 +92,18 @@ impl Game {
             //     println!("Mouse moved '{} {}'", pos[0], pos[1]);
             // });
 
-            self.window.draw_2d(&event, |context, graphics, device| {
+            self.window.draw_2d(&event, |context, graphics, _device| {
                 clear([0.8; 4], graphics);
-
-                scene.draw(context.transform, graphics);
-                // board.draw(context.transform, graphics);
 
                 rectangle(
                     [1.0, 0.0, 0.0, 1.0], // red
-                    [200.0, 200.0, 100.0, 100.0],
+                    [200.0, 200.0, 20.0, 20.0],
                     context.transform,
                     graphics,
                 );
+
+                scene.draw(context.transform, graphics);
+                // board.draw(context.transform, graphics);
 
                 // let text_transform = context.transform.trans(100.0, 100.0);
                 // Text::new_color([0.0, 0.0, 1.0, 1.0], 32)

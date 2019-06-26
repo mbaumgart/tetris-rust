@@ -1,7 +1,6 @@
 use super::structs::Size;
-
-use super::tetromino::create_tetromino_shapes;
-use super::tetromino::TetrominoShape;
+use super::tetromino::{create_tetromino_shapes, TetrominoShape};
+use std::collections::HashMap;
 
 pub struct Config {
     pub window_title: String,

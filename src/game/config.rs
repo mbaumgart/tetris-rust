@@ -1,6 +1,6 @@
-
 use super::structs::Size;
 use std::collections::HashMap;
+
 pub struct Config {
     pub window_title: String,
     pub window_size: Size,

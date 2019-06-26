@@ -10,14 +10,14 @@ mod sprite;
 mod structs;
 mod tetromino;
 
-pub struct Game {
+pub struct Tetris {
     config: config::Config,
     window: PistonWindow,
     assets: assets::Assets,
 }
 
-impl Game {
-    pub fn new() -> Game {
+impl Tetris {
+    pub fn new() -> Tetris {
         let mut _config = config::Config::new();
         let mut _window: PistonWindow =
             WindowSettings::new(_config.window_title.clone(), _config.window_size.to_array())
@@ -28,7 +28,7 @@ impl Game {
         _window.set_lazy(true);
         let _assets = assets::Assets::new(&mut _window);
 
-        Game {
+        Tetris {
             config: _config,
             window: _window,
             assets: _assets,

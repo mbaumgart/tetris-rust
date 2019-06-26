@@ -1,5 +1,5 @@
 [package]
-name = "rust-game"
+name = "Tetris"
 version = "0.1.0"
 authors = ["Martin Baumgart <martin.baumgart@daparto.com>"]
 edition = "2018"

@@ -1,4 +1,4 @@
-use piston_window::math::{Matrix2d, Vec2d};
+use piston_window::math::{Matrix2d, Scalar, Vec2d};
 use piston_window::{DrawState, G2d, G2dTexture, Image, Transformed};
 
 pub struct Sprite {
@@ -28,5 +28,9 @@ impl Sprite {
         Image::new()
             .color([self.color[0], self.color[1], self.color[2], self.opacity])
             .draw(&self.texture, &DrawState::default(), t, graphics);
+    }
+
+    pub fn translate(&mut self, x: Scalar, y: Scalar) {
+        self.position = [self.position[0] + x, self.position[1] + y];
     }
 }

@@ -1,6 +1,6 @@
 use super::sprite::Sprite;
-use piston_window::math::Matrix2d;
-use piston_window::{G2d, G2dTexture, ImageSize, Transformed};
+use piston_window::math::{Matrix2d, Scalar};
+use piston_window::{G2d, G2dTexture, ImageSize};
 use std::collections::HashMap;
 
 pub struct Tetromino {
@@ -39,7 +39,13 @@ impl Tetromino {
         }
     }
 
-    pub fn rotate(&mut self) {}
+    pub fn translate(&mut self, x: Scalar, y: Scalar) {
+        for sprite in &mut self.sprites {
+            sprite.translate(x, y);
+        }
+    }
+
+    pub fn rotate(&self) {}
 }
 
 #[derive(Hash, Eq, PartialEq)]

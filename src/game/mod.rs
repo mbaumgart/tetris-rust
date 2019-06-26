@@ -64,24 +64,9 @@ impl Game {
         if let Some(Button::Keyboard(key)) = event.press_args() {
             match key {
                 Key::Up => tetromino.rotate(),
-                Key::Down => {
-                    sprite_block.position = [
-                        sprite_block.position[0],
-                        sprite_block.position[1] + self.config.brick_size.height,
-                    ]
-                }
-                Key::Left => {
-                    sprite_block.position = [
-                        sprite_block.position[0] - self.config.brick_size.width,
-                        sprite_block.position[1],
-                    ]
-                }
-                Key::Right => {
-                    sprite_block.position = [
-                        sprite_block.position[0] + self.config.brick_size.width,
-                        sprite_block.position[1],
-                    ]
-                }
+                Key::Down => tetromino.translate(0.0, self.config.brick_size.height),
+                Key::Left => tetromino.translate(-self.config.brick_size.width, 0.0),
+                Key::Right => tetromino.translate(self.config.brick_size.width, 0.0),
                 _ => (),
             }
         };
@@ -116,7 +101,7 @@ impl Game {
             clear([0.8; 4], graphics);
 
             rectangle(
-                [0.5, 0.9, 0.5, 1.0], // color
+                [0.0, 0.0, 0.0, 1.0], // color
                 [0.0, 0.0, area_width, area_height],
                 context.transform,
                 graphics,

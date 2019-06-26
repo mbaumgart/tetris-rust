@@ -1,7 +1,7 @@
 use super::structs::Size;
-use super::tetromino::TetrominoShape;
+
 use super::tetromino::create_tetromino_shapes;
-use std::collections::HashMap;
+use super::tetromino::TetrominoShape;
 
 pub struct Config {
     pub window_title: String,
@@ -17,7 +17,7 @@ pub struct Config {
 impl Config {
     pub fn new() -> Config {
         Config {
-            window_title: String::from("Tetris Game"),
+            window_title: String::from("Tetris"),
             window_size: Size::new(400.0, 600.0),
             bricks_horizontal: 10,
             bricks_vertical: 18,

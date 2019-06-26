@@ -21,14 +21,10 @@ impl Config {
             window_size: Size::new(400.0, 600.0),
             bricks_horizontal: 10,
             bricks_vertical: 18,
-            brick_size: Size::new(16.0, 16.0),
+            brick_size: Size::new(28.0, 28.0),
             gravity: 0.015,
             drop_speed: 30.0,
             tetromino_shape_map: create_tetromino_shapes(),
         }
-    }
-
-    pub fn set_brick_size(&mut self, width: f64, height: f64) {
-        self.brick_size = Size::new(width, height);
     }
 }

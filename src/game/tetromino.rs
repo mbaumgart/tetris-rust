@@ -4,30 +4,32 @@ use piston_window::{G2d, G2dTexture, ImageSize};
 use std::collections::HashMap;
 
 pub struct Tetromino {
-    sprites: Vec<Sprite>,
+    pub sprites: Vec<Sprite>,
 }
 
 impl Tetromino {
     pub fn new(texture: &G2dTexture, tetromino_shape: TetrominoShape) -> Tetromino {
         let mut _sprites: Vec<Sprite> = vec![];
         let shapes = create_tetromino_shapes();
-        let shape_matrix = shapes.get(&tetromino_shape);
+        let shape_matrix_value = shapes.get(&tetromino_shape);
         let (offset_x, offset_y) = texture.get_size();
 
-        // I don't get why I need three loops to iterate a two dimensional array
-        for row in shape_matrix.iter() {
-            for (y, col) in row.iter().enumerate() {
-                for (x, entry) in col.iter().enumerate() {
-                    // if we find a positive flag in the matrix create a sprite and position it
-                    if *entry {
-                        let mut sprite = Sprite::new(texture.clone());
-                        let pos_x = offset_x as f64 * x as f64;
-                        let pos_y = offset_y as f64 * (y - 1) as f64;
-                        sprite.position = [pos_x, pos_y];
-                        _sprites.push(sprite);
+        match shape_matrix_value {
+            Some(shape_matrix) => {
+                for (y, row) in shape_matrix.iter().enumerate() {
+                    for (x, col) in row.iter().enumerate() {
+                        // if we find a positive flag in the matrix create a sprite and position it
+                        if *col {
+                            let mut sprite = Sprite::new(texture.clone());
+                            let pos_x = offset_x as f64 * x as f64;
+                            let pos_y = offset_y as f64 * (y - 1) as f64;
+                            sprite.position = [pos_x, pos_y];
+                            _sprites.push(sprite);
+                        }
                     }
                 }
             }
+            None => (),
         }
 
         Tetromino { sprites: _sprites }

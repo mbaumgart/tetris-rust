@@ -36,11 +36,6 @@ impl Game {
     }
 
     pub fn run(&mut self) {
-        self.config.set_brick_size(
-            self.assets.brick_blue.get_width() as f64,
-            self.assets.brick_blue.get_height() as f64,
-        );
-
         let mut tetromino =
             tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
         let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());

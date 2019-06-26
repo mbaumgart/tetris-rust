@@ -8,6 +8,7 @@ mod assets;
 mod config;
 mod sprite;
 mod structs;
+mod tetromino;
 
 pub struct Game {
     config: config::Config,
@@ -18,12 +19,13 @@ pub struct Game {
 impl Game {
     pub fn new() -> Game {
         let mut _config = config::Config::new();
-        let mut _window =
+        let mut _window: PistonWindow =
             WindowSettings::new(_config.window_title.clone(), _config.window_size.to_array())
                 .exit_on_esc(true)
                 .samples(4)
                 .build()
                 .unwrap();
+        _window.set_lazy(true);
         let _assets = assets::Assets::new(&mut _window);
 
         Game {
@@ -39,25 +41,47 @@ impl Game {
             self.assets.brick_blue.get_height() as f64,
         );
 
+        let mut tetromino =
+            tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
         let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
+        let sprite_block_2 = sprite::Sprite::new(self.assets.brick_green.clone());
 
         // game loop
         while let Some(event) = self.window.next() {
-            self.update(&event, &mut sprite_block);
-            self.draw(&event, &sprite_block);
+            self.update(&event, &mut sprite_block, &mut tetromino);
+            self.draw(&event, &sprite_block, &sprite_block_2, &mut tetromino);
         }
     }
 
-    fn update<E>(&mut self, event: &E, sprite_block: &mut sprite::Sprite)
-    where
+    fn update<E>(
+        &mut self,
+        event: &E,
+        sprite_block: &mut sprite::Sprite,
+        tetromino: &mut tetromino::Tetromino,
+    ) where
         E: GenericEvent,
     {
         if let Some(Button::Keyboard(key)) = event.press_args() {
             match key {
-                // Key::Up => scene.run(id_block, &anim_move_up),
-                // Key::Down => scene.run(id_block, &anim_move_down),
-                // Key::Left => scene.run(id_block, &anim_move_left),
-                Key::Right => sprite_block.position = [self.config.brick_size.width, 0.0],
+                Key::Up => tetromino.rotate(),
+                Key::Down => {
+                    sprite_block.position = [
+                        sprite_block.position[0],
+                        sprite_block.position[1] + self.config.brick_size.height,
+                    ]
+                }
+                Key::Left => {
+                    sprite_block.position = [
+                        sprite_block.position[0] - self.config.brick_size.width,
+                        sprite_block.position[1],
+                    ]
+                }
+                Key::Right => {
+                    sprite_block.position = [
+                        sprite_block.position[0] + self.config.brick_size.width,
+                        sprite_block.position[1],
+                    ]
+                }
                 _ => (),
             }
         };
@@ -76,8 +100,13 @@ impl Game {
         // });
     }
 
-    fn draw<E>(&mut self, event: &E, sprite_block: &sprite::Sprite)
-    where
+    fn draw<E>(
+        &mut self,
+        event: &E,
+        sprite_block: &sprite::Sprite,
+        sprite_block_2: &sprite::Sprite,
+        tetromino: &mut tetromino::Tetromino,
+    ) where
         E: GenericEvent,
     {
         let area_width = self.config.bricks_horizontal as f64 * self.config.brick_size.width;
@@ -93,7 +122,9 @@ impl Game {
                 graphics,
             );
 
+            sprite_block_2.draw(context.transform, graphics);
             sprite_block.draw(context.transform, graphics);
+            tetromino.draw(context.transform, graphics);
         });
     }
 }

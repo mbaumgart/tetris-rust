@@ -70,20 +70,6 @@ impl Tetris {
             tetromino.move_down();
             self.last_update = SystemTime::now();
         }
-
-
-        // if let Some(button) = event.release_args() {
-        //     match button {
-        //         Button::Keyboard(key) => println!("Released keyboard key '{:?}'", key),
-        //         Button::Mouse(button) => println!("Released mouse button '{:?}'", button),
-        //         Button::Controller(button) => println!("Released controller button '{:?}'", button),
-        //         Button::Hat(hat) => println!("Released controller hat `{:?}`", hat),
-        //     }
-        // };
-
-        // event.mouse_cursor(|pos| {
-        //     println!("Mouse moved '{} {}'", pos[0], pos[1]);
-        // });
     }
 
     fn draw<E>(

@@ -8,7 +8,7 @@ pub struct Config {
     pub bricks_horizontal: u8,
     pub bricks_vertical: u8,
     pub brick_size: Size,
-    pub gravity: f32,
+    pub update_ms: u128,
     pub drop_speed: f32,
     pub tetromino_shape_map: HashMap<TetrominoShape, [[bool; 4]; 4]>,
 }
@@ -21,7 +21,7 @@ impl Config {
             bricks_horizontal: 10,
             bricks_vertical: 18,
             brick_size: Size::new(28.0, 28.0),
-            gravity: 0.015,
+            update_ms: 400,
             drop_speed: 30.0,
             tetromino_shape_map: create_tetromino_shapes(),
         }

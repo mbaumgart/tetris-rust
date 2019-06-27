@@ -47,6 +47,21 @@ impl Tetromino {
         }
     }
 
+    pub fn move_left(&mut self) {
+        let (x, _y) = self.sprites[0].texture.get_size();
+        self.translate(-(x as f64), 0.0);
+    }
+
+    pub fn move_right(&mut self) {
+        let (x, _y) = self.sprites[0].texture.get_size();
+        self.translate(x as f64, 0.0);
+    }
+
+    pub fn move_down(&mut self) {
+        let (_x, y) = self.sprites[0].texture.get_size();
+        self.translate(0.0, y as f64);
+    }
+
     pub fn rotate(&self) {}
 }
 

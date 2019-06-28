@@ -6,27 +6,31 @@ mod config;
 mod sprite;
 mod tetromino;
 
+use self::assets::*;
+use self::config::*;
+use self::sprite::*;
+use self::tetromino::*;
 use piston_window::*;
 use std::time::SystemTime;
 
 pub struct Tetris {
     window: PistonWindow,
-    assets: assets::Assets,
-    board: Vec<sprite::Sprite>,
-    tetromino: tetromino::Tetromino,
+    assets: Assets,
+    board: Vec<Sprite>,
+    tetromino: Tetromino,
     last_update: SystemTime,
 }
 
 impl Tetris {
     pub fn new() -> Tetris {
-        let mut _window: PistonWindow =
-            WindowSettings::new(config::WINDOW_TITLE, config::WINDOW_SIZE)
-                .exit_on_esc(true)
-                .samples(4)
-                .build()
-                .unwrap();
-        let _assets = assets::Assets::new(&mut _window);
-        let _tetromino = tetromino::Tetromino::new(&_assets.brick_red, tetromino::TetrominoShape::L);
+        let mut _window: PistonWindow = WindowSettings::new(WINDOW_TITLE, WINDOW_SIZE)
+            .exit_on_esc(true)
+            .samples(4)
+            .build()
+            .unwrap();
+        let _assets = Assets::new(&mut _window);
+        let _tetromino =
+            tetromino::Tetromino::new(&_assets.brick_red, tetromino::TetrominoShape::L);
 
         Tetris {
             window: _window,
@@ -38,11 +42,8 @@ impl Tetris {
     }
 
     pub fn run(&mut self) {
-        let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
-        sprite_block.translate(
-            config::GRID_CELL_SIZE[0] * 4.0,
-            config::GRID_CELL_SIZE[1] * 10.0,
-        );
+        let mut sprite_block = Sprite::new(self.assets.brick_blue.clone());
+        sprite_block.translate(GRID_CELL_SIZE[0] * 4.0, GRID_CELL_SIZE[1] * 10.0);
         self.board.push(sprite_block);
 
         // game loop
@@ -79,11 +80,12 @@ impl Tetris {
             }
         };
 
-        if config::UPDATE_MS < self.last_update.elapsed().unwrap().as_millis() {
+        if UPDATE_MS < self.last_update.elapsed().unwrap().as_millis() {
             self.last_update = SystemTime::now();
             if self.tetromino.is_blocked_down(&self.board) {
                 self.tetromino.detach(&mut self.board);
-                self.tetromino = tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
+                self.tetromino =
+                    tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
             } else {
                 self.tetromino.move_down();
             }
@@ -94,8 +96,8 @@ impl Tetris {
     where
         E: GenericEvent,
     {
-        let area_width = config::GRID_CELLS_HORIZONTAL as f64 * config::GRID_CELL_SIZE[0];
-        let area_height = config::GRID_CELLS_VERTICAL as f64 * config::GRID_CELL_SIZE[1];
+        let area_width = GRID_CELLS_HORIZONTAL as f64 * GRID_CELL_SIZE[0];
+        let area_height = GRID_CELLS_VERTICAL as f64 * GRID_CELL_SIZE[1];
         let board = &self.board;
         let tetromino = &self.tetromino;
 

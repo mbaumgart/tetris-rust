@@ -39,8 +39,8 @@ impl Tetris {
             tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
         let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
         sprite_block.translate(
-            config::GRID_CELL_SIZE[0] * 2.0,
-            config::GRID_CELL_SIZE[1] * 4.0,
+            config::GRID_CELL_SIZE[0] * 4.0,
+            config::GRID_CELL_SIZE[1] * 10.0,
         );
         self.board.push(sprite_block);
 
@@ -57,9 +57,7 @@ impl Tetris {
     {
         if let Some(Button::Keyboard(key)) = event.press_args() {
             match key {
-                Key::Up => {
-                    tetromino.rotate()
-                },
+                Key::Up => tetromino.rotate(),
                 Key::Down => {
                     self.last_update = SystemTime::now();
                     if !tetromino.is_blocked_down(&self.board) {

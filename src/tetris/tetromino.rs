@@ -65,10 +65,13 @@ impl Tetromino {
         let mut is_blocked = false;
         for tetromino_sprite in &self.sprites {
             for board_sprite in board {
+                let is_border_below = tetromino_sprite.position[1] + GRID_CELL_SIZE[1]
+                    >= GRID_CELLS_VERTICAL as f64 * GRID_CELL_SIZE[1];
                 let is_same_column = tetromino_sprite.position[0] == board_sprite.position[0];
                 let is_row_below =
                     tetromino_sprite.position[1] + GRID_CELL_SIZE[1] == board_sprite.position[1];
-                if is_same_column && is_row_below {
+
+                if is_border_below || is_same_column && is_row_below {
                     is_blocked = true;
                 }
             }
@@ -81,10 +84,12 @@ impl Tetromino {
         let mut is_blocked = false;
         for tetromino_sprite in &self.sprites {
             for board_sprite in board {
+                let is_border_left = tetromino_sprite.position[0] - GRID_CELL_SIZE[0] < 0.0;
                 let is_column_left =
                     tetromino_sprite.position[0] - GRID_CELL_SIZE[0] == board_sprite.position[0];
                 let is_same_row = tetromino_sprite.position[1] == board_sprite.position[1];
-                if is_column_left && is_same_row {
+
+                if is_border_left || is_column_left && is_same_row {
                     is_blocked = true;
                 }
             }
@@ -97,10 +102,13 @@ impl Tetromino {
         let mut is_blocked = false;
         for tetromino_sprite in &self.sprites {
             for board_sprite in board {
+                let is_border_right = tetromino_sprite.position[0] + GRID_CELL_SIZE[0]
+                    >= GRID_CELLS_HORIZONTAL as f64 * GRID_CELL_SIZE[0];
                 let is_column_right =
                     tetromino_sprite.position[0] + GRID_CELL_SIZE[0] == board_sprite.position[0];
                 let is_same_row = tetromino_sprite.position[1] == board_sprite.position[1];
-                if is_column_right && is_same_row {
+
+                if is_border_right || is_column_right && is_same_row {
                     is_blocked = true;
                 }
             }

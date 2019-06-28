@@ -7,7 +7,6 @@ use std::time::SystemTime;
 mod assets;
 mod config;
 mod sprite;
-mod structs;
 mod tetromino;
 
 pub struct Tetris {
@@ -21,7 +20,7 @@ impl Tetris {
     pub fn new() -> Tetris {
         let mut _config = config::Config::new();
         let mut _window: PistonWindow =
-            WindowSettings::new(_config.window_title.clone(), _config.window_size.to_array())
+            WindowSettings::new(_config.window_title.clone(), _config.window_size)
                 .exit_on_esc(true)
                 .samples(4)
                 .build()
@@ -39,7 +38,11 @@ impl Tetris {
     pub fn run(&mut self) {
         let mut tetromino =
             tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
-        let sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
+        let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
+        sprite_block.translate(
+            self.config.brick_size[0] * 1.0,
+            self.config.brick_size[1] * 4.0,
+        );
 
         // game loop
         while let Some(event) = self.window.next() {
@@ -80,14 +83,14 @@ impl Tetris {
     ) where
         E: GenericEvent,
     {
-        let area_width = self.config.bricks_horizontal as f64 * self.config.brick_size.width;
-        let area_height = self.config.bricks_vertical as f64 * self.config.brick_size.height;
+        let area_width = self.config.bricks_horizontal as f64 * self.config.brick_size[0];
+        let area_height = self.config.bricks_vertical as f64 * self.config.brick_size[1];
 
         self.window.draw_2d(event, |context, graphics, _device| {
             clear([0.8; 4], graphics);
 
             rectangle(
-                [0.0, 0.0, 0.0, 1.0], // color
+                [0.2, 0.2, 0.4, 1.0], // color
                 [0.0, 0.0, area_width, area_height],
                 context.transform,
                 graphics,

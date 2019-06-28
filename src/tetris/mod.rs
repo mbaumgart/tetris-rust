@@ -29,8 +29,7 @@ impl Tetris {
             .build()
             .unwrap();
         let _assets = Assets::new(&mut _window);
-        let _tetromino =
-            tetromino::Tetromino::new(&_assets.brick_red, tetromino::TetrominoShape::L);
+        let _tetromino = Tetromino::new(&_assets, TetrominoShape::L);
 
         Tetris {
             window: _window,
@@ -42,11 +41,6 @@ impl Tetris {
     }
 
     pub fn run(&mut self) {
-        let mut sprite_block = Sprite::new(self.assets.brick_blue.clone());
-        sprite_block.translate(GRID_CELL_SIZE[0] * 4.0, GRID_CELL_SIZE[1] * 10.0);
-        self.board.push(sprite_block);
-
-        // game loop
         while let Some(event) = self.window.next() {
             self.update(&event);
             self.draw(&event);
@@ -84,8 +78,7 @@ impl Tetris {
             self.last_update = SystemTime::now();
             if self.tetromino.is_blocked_down(&self.board) {
                 self.tetromino.detach(&mut self.board);
-                self.tetromino =
-                    tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
+                self.tetromino = Tetromino::new(&self.assets, TetrominoShape::L);
             } else {
                 self.tetromino.move_down();
             }

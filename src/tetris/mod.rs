@@ -1,17 +1,18 @@
 extern crate find_folder;
 extern crate piston_window;
 
-use piston_window::*;
-use std::time::SystemTime;
-
 mod assets;
 mod config;
 mod sprite;
 mod tetromino;
 
+use piston_window::*;
+use std::time::SystemTime;
+
 pub struct Tetris {
     window: PistonWindow,
     assets: assets::Assets,
+    board: Vec<sprite::Sprite>,
     last_update: SystemTime,
 }
 
@@ -28,6 +29,7 @@ impl Tetris {
         Tetris {
             window: _window,
             assets: _assets,
+            board: Vec::new(),
             last_update: SystemTime::now(),
         }
     }
@@ -37,14 +39,15 @@ impl Tetris {
             tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
         let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
         sprite_block.translate(
-            config::GRID_CELL_SIZE[0] * 1.0,
+            config::GRID_CELL_SIZE[0] * 2.0,
             config::GRID_CELL_SIZE[1] * 4.0,
         );
+        self.board.push(sprite_block);
 
         // game loop
         while let Some(event) = self.window.next() {
             self.update(&event, &mut tetromino);
-            self.draw(&event, &sprite_block, &mut tetromino);
+            self.draw(&event, &mut tetromino);
         }
     }
 
@@ -56,9 +59,12 @@ impl Tetris {
             match key {
                 Key::Up => tetromino.rotate(),
                 Key::Down => {
-                    // reset the time to prevent double down movement
                     self.last_update = SystemTime::now();
-                    tetromino.move_down();
+                    if tetromino.is_blocked_down(&self.board) {
+                        // TODO: lock in place
+                    } else {
+                        tetromino.move_down();
+                    }
                 }
                 Key::Left => tetromino.move_left(),
                 Key::Right => tetromino.move_right(),
@@ -67,21 +73,22 @@ impl Tetris {
         };
 
         if config::UPDATE_MS < self.last_update.elapsed().unwrap().as_millis() {
-            tetromino.move_down();
             self.last_update = SystemTime::now();
+            if tetromino.is_blocked_down(&self.board) {
+                // TODO: lock in place
+            } else {
+                tetromino.move_down();
+            }
         }
     }
 
-    fn draw<E>(
-        &mut self,
-        event: &E,
-        sprite_block: &sprite::Sprite,
-        tetromino: &mut tetromino::Tetromino,
-    ) where
+    fn draw<E>(&mut self, event: &E, tetromino: &mut tetromino::Tetromino)
+    where
         E: GenericEvent,
     {
         let area_width = config::GRID_CELLS_HORIZONTAL as f64 * config::GRID_CELL_SIZE[0];
         let area_height = config::GRID_CELLS_VERTICAL as f64 * config::GRID_CELL_SIZE[1];
+        let sprite_block = self.board.get(0).unwrap();
 
         self.window.draw_2d(event, |context, graphics, _device| {
             clear([0.8; 4], graphics);

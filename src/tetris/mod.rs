@@ -10,7 +10,6 @@ mod sprite;
 mod tetromino;
 
 pub struct Tetris {
-    config: config::Config,
     window: PistonWindow,
     assets: assets::Assets,
     last_update: SystemTime,
@@ -18,9 +17,8 @@ pub struct Tetris {
 
 impl Tetris {
     pub fn new() -> Tetris {
-        let mut _config = config::Config::new();
         let mut _window: PistonWindow =
-            WindowSettings::new(_config.window_title.clone(), _config.window_size)
+            WindowSettings::new(config::WINDOW_TITLE, config::WINDOW_SIZE)
                 .exit_on_esc(true)
                 .samples(4)
                 .build()
@@ -28,7 +26,6 @@ impl Tetris {
         let _assets = assets::Assets::new(&mut _window);
 
         Tetris {
-            config: _config,
             window: _window,
             assets: _assets,
             last_update: SystemTime::now(),
@@ -40,8 +37,8 @@ impl Tetris {
             tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
         let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
         sprite_block.translate(
-            self.config.brick_size[0] * 1.0,
-            self.config.brick_size[1] * 4.0,
+            config::GRID_CELL_SIZE[0] * 1.0,
+            config::GRID_CELL_SIZE[1] * 4.0,
         );
 
         // game loop
@@ -69,7 +66,7 @@ impl Tetris {
             }
         };
 
-        if self.config.update_ms < self.last_update.elapsed().unwrap().as_millis() {
+        if config::UPDATE_MS < self.last_update.elapsed().unwrap().as_millis() {
             tetromino.move_down();
             self.last_update = SystemTime::now();
         }
@@ -83,8 +80,8 @@ impl Tetris {
     ) where
         E: GenericEvent,
     {
-        let area_width = self.config.bricks_horizontal as f64 * self.config.brick_size[0];
-        let area_height = self.config.bricks_vertical as f64 * self.config.brick_size[1];
+        let area_width = config::GRID_CELLS_HORIZONTAL as f64 * config::GRID_CELL_SIZE[0];
+        let area_height = config::GRID_CELLS_VERTICAL as f64 * config::GRID_CELL_SIZE[1];
 
         self.window.draw_2d(event, |context, graphics, _device| {
             clear([0.8; 4], graphics);

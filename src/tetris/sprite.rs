@@ -24,7 +24,7 @@ impl Sprite {
         let t = transform
             .trans(self.position[0], self.position[1])
             .scale(self.scale[0], self.scale[1]);
-            
+
         Image::new()
             .color([self.color[0], self.color[1], self.color[2], self.opacity])
             .draw(&self.texture, &DrawState::default(), t, graphics);

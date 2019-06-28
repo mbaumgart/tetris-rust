@@ -1,6 +1,7 @@
+use super::config::*;
 use super::sprite::Sprite;
 use piston_window::math::{Matrix2d, Scalar};
-use piston_window::{G2d, G2dTexture, ImageSize};
+use piston_window::{G2d, G2dTexture};
 use std::collections::HashMap;
 
 pub struct Tetromino {
@@ -12,7 +13,6 @@ impl Tetromino {
         let mut _sprites: Vec<Sprite> = vec![];
         let shapes = create_tetromino_shapes();
         let shape_matrix_value = shapes.get(&tetromino_shape);
-        let (offset_x, offset_y) = texture.get_size();
 
         match shape_matrix_value {
             Some(shape_matrix) => {
@@ -21,8 +21,8 @@ impl Tetromino {
                         // if we find a positive flag in the matrix create a sprite and position it
                         if *col {
                             let mut sprite = Sprite::new(texture.clone());
-                            let pos_x = offset_x as f64 * x as f64;
-                            let pos_y = offset_y as f64 * (y - 1) as f64;
+                            let pos_x = GRID_CELL_SIZE[0] * x as f64;
+                            let pos_y = GRID_CELL_SIZE[1] * (y - 1) as f64;
                             sprite.position = [pos_x, pos_y];
                             _sprites.push(sprite);
                         }
@@ -48,21 +48,34 @@ impl Tetromino {
     }
 
     pub fn move_left(&mut self) {
-        let (x, _y) = self.sprites[0].texture.get_size();
-        self.translate(-(x as f64), 0.0);
+        self.translate(-GRID_CELL_SIZE[0], 0.0);
     }
 
     pub fn move_right(&mut self) {
-        let (x, _y) = self.sprites[0].texture.get_size();
-        self.translate(x as f64, 0.0);
+        self.translate(GRID_CELL_SIZE[0], 0.0);
     }
 
     pub fn move_down(&mut self) {
-        let (_x, y) = self.sprites[0].texture.get_size();
-        self.translate(0.0, y as f64);
+        self.translate(0.0, GRID_CELL_SIZE[1]);
     }
 
     pub fn rotate(&self) {}
+
+    pub fn is_blocked_down(&self, board: &Vec<Sprite>) -> bool {
+        let mut is_blocked = false;
+        for tetromino_sprite in &self.sprites {
+            for board_sprite in board {
+                let is_same_column = tetromino_sprite.position[0] == board_sprite.position[0];
+                let is_row_below =
+                    tetromino_sprite.position[1] + GRID_CELL_SIZE[0] == board_sprite.position[1];
+                if is_same_column && is_row_below {
+                    is_blocked = true;
+                }
+            }
+        }
+
+        is_blocked
+    }
 }
 
 #[derive(Hash, Eq, PartialEq)]

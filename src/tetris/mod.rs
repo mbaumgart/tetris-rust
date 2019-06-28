@@ -57,17 +57,25 @@ impl Tetris {
     {
         if let Some(Button::Keyboard(key)) = event.press_args() {
             match key {
-                Key::Up => tetromino.rotate(),
+                Key::Up => {
+                    tetromino.rotate()
+                },
                 Key::Down => {
                     self.last_update = SystemTime::now();
-                    if tetromino.is_blocked_down(&self.board) {
-                        // TODO: lock in place
-                    } else {
+                    if !tetromino.is_blocked_down(&self.board) {
                         tetromino.move_down();
                     }
                 }
-                Key::Left => tetromino.move_left(),
-                Key::Right => tetromino.move_right(),
+                Key::Left => {
+                    if !tetromino.is_blocked_left(&self.board) {
+                        tetromino.move_left()
+                    }
+                }
+                Key::Right => {
+                    if !tetromino.is_blocked_right(&self.board) {
+                        tetromino.move_right()
+                    }
+                }
                 _ => (),
             }
         };

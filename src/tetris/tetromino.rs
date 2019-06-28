@@ -67,8 +67,40 @@ impl Tetromino {
             for board_sprite in board {
                 let is_same_column = tetromino_sprite.position[0] == board_sprite.position[0];
                 let is_row_below =
-                    tetromino_sprite.position[1] + GRID_CELL_SIZE[0] == board_sprite.position[1];
+                    tetromino_sprite.position[1] + GRID_CELL_SIZE[1] == board_sprite.position[1];
                 if is_same_column && is_row_below {
+                    is_blocked = true;
+                }
+            }
+        }
+
+        is_blocked
+    }
+
+    pub fn is_blocked_left(&self, board: &Vec<Sprite>) -> bool {
+        let mut is_blocked = false;
+        for tetromino_sprite in &self.sprites {
+            for board_sprite in board {
+                let is_column_left =
+                    tetromino_sprite.position[0] - GRID_CELL_SIZE[0] == board_sprite.position[0];
+                let is_same_row = tetromino_sprite.position[1] == board_sprite.position[1];
+                if is_column_left && is_same_row {
+                    is_blocked = true;
+                }
+            }
+        }
+
+        is_blocked
+    }
+
+    pub fn is_blocked_right(&self, board: &Vec<Sprite>) -> bool {
+        let mut is_blocked = false;
+        for tetromino_sprite in &self.sprites {
+            for board_sprite in board {
+                let is_column_right =
+                    tetromino_sprite.position[0] + GRID_CELL_SIZE[0] == board_sprite.position[0];
+                let is_same_row = tetromino_sprite.position[1] == board_sprite.position[1];
+                if is_column_right && is_same_row {
                     is_blocked = true;
                 }
             }

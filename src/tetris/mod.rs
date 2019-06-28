@@ -13,6 +13,7 @@ pub struct Tetris {
     window: PistonWindow,
     assets: assets::Assets,
     board: Vec<sprite::Sprite>,
+    tetromino: tetromino::Tetromino,
     last_update: SystemTime,
 }
 
@@ -25,18 +26,18 @@ impl Tetris {
                 .build()
                 .unwrap();
         let _assets = assets::Assets::new(&mut _window);
+        let _tetromino = tetromino::Tetromino::new(&_assets.brick_red, tetromino::TetrominoShape::L);
 
         Tetris {
             window: _window,
             assets: _assets,
             board: Vec::new(),
+            tetromino: _tetromino,
             last_update: SystemTime::now(),
         }
     }
 
     pub fn run(&mut self) {
-        let mut tetromino =
-            tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
         let mut sprite_block = sprite::Sprite::new(self.assets.brick_blue.clone());
         sprite_block.translate(
             config::GRID_CELL_SIZE[0] * 4.0,
@@ -46,32 +47,32 @@ impl Tetris {
 
         // game loop
         while let Some(event) = self.window.next() {
-            self.update(&event, &mut tetromino);
-            self.draw(&event, &mut tetromino);
+            self.update(&event);
+            self.draw(&event);
         }
     }
 
-    fn update<E>(&mut self, event: &E, tetromino: &mut tetromino::Tetromino)
+    fn update<E>(&mut self, event: &E)
     where
         E: GenericEvent,
     {
         if let Some(Button::Keyboard(key)) = event.press_args() {
             match key {
-                Key::Up => tetromino.rotate(),
+                Key::Up => self.tetromino.rotate(),
                 Key::Down => {
                     self.last_update = SystemTime::now();
-                    if !tetromino.is_blocked_down(&self.board) {
-                        tetromino.move_down();
+                    if !self.tetromino.is_blocked_down(&self.board) {
+                        self.tetromino.move_down();
                     }
                 }
                 Key::Left => {
-                    if !tetromino.is_blocked_left(&self.board) {
-                        tetromino.move_left()
+                    if !self.tetromino.is_blocked_left(&self.board) {
+                        self.tetromino.move_left()
                     }
                 }
                 Key::Right => {
-                    if !tetromino.is_blocked_right(&self.board) {
-                        tetromino.move_right()
+                    if !self.tetromino.is_blocked_right(&self.board) {
+                        self.tetromino.move_right()
                     }
                 }
                 _ => (),
@@ -80,21 +81,23 @@ impl Tetris {
 
         if config::UPDATE_MS < self.last_update.elapsed().unwrap().as_millis() {
             self.last_update = SystemTime::now();
-            if tetromino.is_blocked_down(&self.board) {
-                // TODO: lock in place
+            if self.tetromino.is_blocked_down(&self.board) {
+                self.tetromino.detach(&mut self.board);
+                self.tetromino = tetromino::Tetromino::new(&self.assets.brick_red, tetromino::TetrominoShape::L);
             } else {
-                tetromino.move_down();
+                self.tetromino.move_down();
             }
         }
     }
 
-    fn draw<E>(&mut self, event: &E, tetromino: &mut tetromino::Tetromino)
+    fn draw<E>(&mut self, event: &E)
     where
         E: GenericEvent,
     {
         let area_width = config::GRID_CELLS_HORIZONTAL as f64 * config::GRID_CELL_SIZE[0];
         let area_height = config::GRID_CELLS_VERTICAL as f64 * config::GRID_CELL_SIZE[1];
-        let sprite_block = self.board.get(0).unwrap();
+        let board = &self.board;
+        let tetromino = &self.tetromino;
 
         self.window.draw_2d(event, |context, graphics, _device| {
             clear([0.8; 4], graphics);
@@ -106,7 +109,9 @@ impl Tetris {
                 graphics,
             );
 
-            sprite_block.draw(context.transform, graphics);
+            for sprite in board {
+                sprite.draw(context.transform, graphics);
+            }
             tetromino.draw(context.transform, graphics);
         });
     }

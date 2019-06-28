@@ -116,6 +116,12 @@ impl Tetromino {
 
         is_blocked
     }
+
+    pub fn detach(&mut self, board: &mut Vec<Sprite>) {
+        for sprite in self.sprites.drain(..) {
+            board.push(sprite);
+        }
+    }
 }
 
 #[derive(Hash, Eq, PartialEq)]

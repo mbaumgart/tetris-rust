@@ -1,5 +1,7 @@
+use super::assets::Assets;
 use super::config::*;
 use super::sprite::Sprite;
+
 use piston_window::math::{Matrix2d, Scalar};
 use piston_window::{G2d, G2dTexture};
 use std::collections::HashMap;
@@ -9,10 +11,11 @@ pub struct Tetromino {
 }
 
 impl Tetromino {
-    pub fn new(texture: &G2dTexture, tetromino_shape: TetrominoShape) -> Tetromino {
+    pub fn new(assets: &Assets, tetromino_shape: TetrominoShape) -> Tetromino {
         let mut _sprites: Vec<Sprite> = vec![];
         let shapes = create_tetromino_shapes();
         let shape_matrix_value = shapes.get(&tetromino_shape);
+        let texture: G2dTexture = assets.brick_green.clone();
 
         match shape_matrix_value {
             Some(shape_matrix) => {
@@ -64,16 +67,20 @@ impl Tetromino {
     pub fn is_blocked_down(&self, board: &Vec<Sprite>) -> bool {
         let mut is_blocked = false;
         for tetromino_sprite in &self.sprites {
-            for board_sprite in board {
-                let is_border_below = tetromino_sprite.position[1] + GRID_CELL_SIZE[1]
-                    >= GRID_CELLS_VERTICAL as f64 * GRID_CELL_SIZE[1];
-                let is_same_column = tetromino_sprite.position[0] == board_sprite.position[0];
-                let is_row_below =
-                    tetromino_sprite.position[1] + GRID_CELL_SIZE[1] == board_sprite.position[1];
+            let cell_bottom_y = tetromino_sprite.position[1] + GRID_CELL_SIZE[1];
 
-                if is_border_below || is_same_column && is_row_below {
+            for board_sprite in board {
+                let is_same_column = tetromino_sprite.position[0] == board_sprite.position[0];
+                let is_row_below = cell_bottom_y == board_sprite.position[1];
+
+                if is_same_column && is_row_below {
                     is_blocked = true;
                 }
+            }
+
+            let is_border_below = cell_bottom_y >= GRID_CELLS_VERTICAL as f64 * GRID_CELL_SIZE[1];
+            if is_border_below {
+                is_blocked = true;
             }
         }
 
@@ -83,15 +90,20 @@ impl Tetromino {
     pub fn is_blocked_left(&self, board: &Vec<Sprite>) -> bool {
         let mut is_blocked = false;
         for tetromino_sprite in &self.sprites {
+            let cell_left_x = tetromino_sprite.position[0] - GRID_CELL_SIZE[0];
+
             for board_sprite in board {
-                let is_border_left = tetromino_sprite.position[0] - GRID_CELL_SIZE[0] < 0.0;
-                let is_column_left =
-                    tetromino_sprite.position[0] - GRID_CELL_SIZE[0] == board_sprite.position[0];
+                let is_column_left = cell_left_x == board_sprite.position[0];
                 let is_same_row = tetromino_sprite.position[1] == board_sprite.position[1];
 
-                if is_border_left || is_column_left && is_same_row {
+                if is_column_left && is_same_row {
                     is_blocked = true;
                 }
+            }
+
+            let is_border_left = cell_left_x < 0.0;
+            if is_border_left {
+                is_blocked = true;
             }
         }
 
@@ -101,16 +113,20 @@ impl Tetromino {
     pub fn is_blocked_right(&self, board: &Vec<Sprite>) -> bool {
         let mut is_blocked = false;
         for tetromino_sprite in &self.sprites {
+            let cell_right_x = tetromino_sprite.position[0] + GRID_CELL_SIZE[0];
+
             for board_sprite in board {
-                let is_border_right = tetromino_sprite.position[0] + GRID_CELL_SIZE[0]
-                    >= GRID_CELLS_HORIZONTAL as f64 * GRID_CELL_SIZE[0];
-                let is_column_right =
-                    tetromino_sprite.position[0] + GRID_CELL_SIZE[0] == board_sprite.position[0];
+                let is_column_right = cell_right_x == board_sprite.position[0];
                 let is_same_row = tetromino_sprite.position[1] == board_sprite.position[1];
 
-                if is_border_right || is_column_right && is_same_row {
+                if is_column_right && is_same_row {
                     is_blocked = true;
                 }
+            }
+
+            let is_border_right = cell_right_x >= GRID_CELLS_HORIZONTAL as f64 * GRID_CELL_SIZE[0];
+            if is_border_right {
+                is_blocked = true;
             }
         }
 

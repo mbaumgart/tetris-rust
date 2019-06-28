@@ -11,28 +11,23 @@ pub struct Tetromino {
 }
 
 impl Tetromino {
-    pub fn new(assets: &Assets, tetromino_shape: TetrominoShape) -> Tetromino {
+    pub fn new(assets: &Assets) -> Tetromino {
         let mut _sprites: Vec<Sprite> = vec![];
         let shapes = create_tetromino_shapes();
-        let shape_matrix_value = shapes.get(&tetromino_shape);
+        let shape_matrix = shapes.get(&TetrominoShape::S).unwrap();
         let texture: G2dTexture = assets.brick_green.clone();
 
-        match shape_matrix_value {
-            Some(shape_matrix) => {
-                for (y, row) in shape_matrix.iter().enumerate() {
-                    for (x, col) in row.iter().enumerate() {
-                        // if we find a positive flag in the matrix create a sprite and position it
-                        if *col {
-                            let mut sprite = Sprite::new(texture.clone());
-                            let pos_x = GRID_CELL_SIZE[0] * x as f64;
-                            let pos_y = GRID_CELL_SIZE[1] * (y - 1) as f64;
-                            sprite.position = [pos_x, pos_y];
-                            _sprites.push(sprite);
-                        }
-                    }
+        for (y, row) in shape_matrix.iter().enumerate() {
+            for (x, col) in row.iter().enumerate() {
+                // if we find a positive flag in the matrix create a sprite and position it
+                if *col {
+                    let mut sprite = Sprite::new(texture.clone());
+                    let pos_x = GRID_CELL_SIZE[0] * x as f64;
+                    let pos_y = GRID_CELL_SIZE[1] * (y - 1) as f64;
+                    sprite.position = [pos_x, pos_y];
+                    _sprites.push(sprite);
                 }
             }
-            None => (),
         }
 
         Tetromino { sprites: _sprites }

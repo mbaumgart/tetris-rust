@@ -29,7 +29,7 @@ impl Tetris {
             .build()
             .unwrap();
         let _assets = Assets::new(&mut _window);
-        let _tetromino = Tetromino::new(&_assets, TetrominoShape::L);
+        let _tetromino = Tetromino::new(&_assets);
 
         Tetris {
             window: _window,
@@ -78,7 +78,7 @@ impl Tetris {
             self.last_update = SystemTime::now();
             if self.tetromino.is_blocked_down(&self.board) {
                 self.tetromino.detach(&mut self.board);
-                self.tetromino = Tetromino::new(&self.assets, TetrominoShape::L);
+                self.tetromino = Tetromino::new(&self.assets);
             } else {
                 self.tetromino.move_down();
             }

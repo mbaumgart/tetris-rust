@@ -13,9 +13,22 @@ pub struct Tetromino {
 
 impl Tetromino {
     pub fn new(assets: &Assets) -> Tetromino {
+        let mut rng = rand::thread_rng();
+        let mut rng2 = rand::thread_rng();
         let mut _sprites: Vec<Sprite> = vec![];
-        let shapes = create_tetromino_shapes();
-        let shape_matrix = shapes.get(&TetrominoShape::S).unwrap();
+
+        let shape_keys = vec![
+            TetrominoShape::D,
+            TetrominoShape::I,
+            TetrominoShape::J,
+            TetrominoShape::L,
+            TetrominoShape::O,
+            TetrominoShape::S,
+            TetrominoShape::Z,
+        ];
+        let shape_key = shape_keys.choose(&mut rng).unwrap();
+        let shape_map = create_tetromino_shapes();
+        let shape_matrix = shape_map.get(&shape_key).unwrap();
 
         // TODO: not ideal to clone everything
         let brick_textures: Vec<G2dTexture> = vec![
@@ -27,8 +40,7 @@ impl Tetromino {
             assets.brick_pink.clone(),
             assets.brick_red.clone(),
         ];
-        let mut rng = rand::thread_rng();
-        let texture: &G2dTexture = brick_textures.choose(&mut rng).unwrap();
+        let texture: &G2dTexture = brick_textures.choose(&mut rng2).unwrap();
 
         for (y, row) in shape_matrix.iter().enumerate() {
             for (x, col) in row.iter().enumerate() {
@@ -36,7 +48,7 @@ impl Tetromino {
                 if *col {
                     let mut sprite = Sprite::new(texture.clone());
                     let pos_x = GRID_CELL_SIZE[0] * x as f64;
-                    let pos_y = GRID_CELL_SIZE[1] * (y - 1) as f64;
+                    let pos_y = GRID_CELL_SIZE[1] * (y as f64 - 1.0);
                     sprite.position = [pos_x, pos_y];
                     _sprites.push(sprite);
                 }

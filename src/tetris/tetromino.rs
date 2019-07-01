@@ -4,6 +4,7 @@ use super::sprite::Sprite;
 
 use piston_window::math::{Matrix2d, Scalar};
 use piston_window::{G2d, G2dTexture};
+use rand::seq::SliceRandom;
 use std::collections::HashMap;
 
 pub struct Tetromino {
@@ -15,7 +16,19 @@ impl Tetromino {
         let mut _sprites: Vec<Sprite> = vec![];
         let shapes = create_tetromino_shapes();
         let shape_matrix = shapes.get(&TetrominoShape::S).unwrap();
-        let texture: G2dTexture = assets.brick_green.clone();
+
+        // TODO: not ideal to clone everything
+        let brick_textures: Vec<G2dTexture> = vec![
+            assets.brick_blue.clone(),
+            assets.brick_brown.clone(),
+            assets.brick_green.clone(),
+            assets.brick_grey.clone(),
+            assets.brick_orange.clone(),
+            assets.brick_pink.clone(),
+            assets.brick_red.clone(),
+        ];
+        let mut rng = rand::thread_rng();
+        let texture: &G2dTexture = brick_textures.choose(&mut rng).unwrap();
 
         for (y, row) in shape_matrix.iter().enumerate() {
             for (x, col) in row.iter().enumerate() {
